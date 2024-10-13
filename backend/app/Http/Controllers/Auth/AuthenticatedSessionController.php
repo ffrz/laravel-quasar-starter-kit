@@ -17,8 +17,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $request->session()->regenerate();
-        $response = response()->json(['status' => 'success']);
-        return $response;
+        return response()->json(['status' => 'success']);
     }
 
     /**
