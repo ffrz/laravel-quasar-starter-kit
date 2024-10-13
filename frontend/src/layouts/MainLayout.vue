@@ -2,40 +2,39 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
         <q-toolbar-title>
-          Quasar App
+          My App
         </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+      <q-list v-if="authStore.user">
+        <q-item clickable to="dashboard">
+          <q-item-section avatar>
+            <q-icon name="dashboard" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Dashboard</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable to="users">
+          <q-item-section avatar>
+            <q-icon name="people" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Users</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable @click="logout">
+          <q-item-section avatar>
+            <q-icon name="logout" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Logout</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -46,61 +45,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import { onMounted, ref } from 'vue'
+import { useAuthStore } from 'src/stores/auth-store';
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 
-defineOptions({
-  name: 'MainLayout'
+const authStore = useAuthStore();
+const $q = useQuasar();
+const router = useRouter();
+const leftDrawerOpen = ref(false);
+
+onMounted(() => {
+  leftDrawerOpen.value = !!authStore.userfalse;
 })
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+function logout() {
+  $q.dialog({
+    title: 'Confirm',
+    message: 'Are you sure you want to log out?',
+    cancel: true,
+    persistent: true
+  }).onOk(() => {
+    $q.loading.show({
+      delay: 100 // ms
+    });
+    authStore.logout();
+    $q.notify({ message: 'Logout success!', color: 'green' });
+    leftDrawerOpen.value = false;
+    $q.loading.hide();
+    router.push('/login');
+  });
+}
 
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer () {
+function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>

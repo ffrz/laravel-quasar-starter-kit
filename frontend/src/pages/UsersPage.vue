@@ -2,10 +2,9 @@
   <q-page class="row ">
     <div class="column full-width">
       <div class="q-ma-lg">
-        <div v-if="authStore.user">
-          <h4 class="full-width">Hello, {{ authStore.user.name }}</h4>
+        <div>
+          <h4 class="full-width q-my-xs">Users</h4>
         </div>
-
       </div>
     </div>
   </q-page>
@@ -15,12 +14,14 @@
 import { useAuthStore } from 'src/stores/auth-store';
 import { onMounted, ref } from 'vue';
 
+defineOptions({
+  name: "DashboardPage",
+});
+
 const authStore = useAuthStore()
 
 onMounted(() => {
   authStore.getUser();
 });
-
-
 
 </script>

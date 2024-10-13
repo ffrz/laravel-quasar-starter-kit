@@ -13,8 +13,6 @@
 
 <script setup>
 import { onMounted, ref } from "vue";
-import axios from "axios";
-import { useQuasar } from 'quasar';
 import { useRouter } from "vue-router";
 import { useAuthStore } from "stores/auth-store";
 
