@@ -3,7 +3,7 @@
     <div class="column full-width">
       <div class="q-ma-lg">
         <div v-if="authStore.user">
-          <h4 class="full-width">Hello, {{ authStore.user.email }}</h4>
+          <h4 class="full-width">Hello, {{ authStore.user.name }}</h4>
           <q-btn class="full-width" color="primary" label="Logout" @click="logout()" />
         </div>
         <div v-else>
@@ -15,7 +15,6 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import { useQuasar } from 'quasar';
 import { useAuthStore } from 'src/stores/auth-store';
 import { onMounted, ref } from 'vue';

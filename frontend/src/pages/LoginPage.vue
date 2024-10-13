@@ -22,7 +22,7 @@
             <q-card-section class="text-center q-pa-none">
               <p class="text-grey-6">
                 Not reigistered?
-                <Link href="/register">Create an Account</Link>
+                <router-link to="/register">Create an Account</router-link>
               </p>
             </q-card-section>
           </q-card>
@@ -60,6 +60,14 @@ let form = ref({
   remember: false,
 });
 
+onMounted(() => {
+  authStore.getUser().then((user) => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  });
+})
+
 async function login() {
   $q.loading.show({
     delay: 100 // ms
@@ -74,8 +82,10 @@ async function login() {
       password: form.value.password,
     })
     .then(function (response) {
-      $q.notify({ message: 'Login Success!', color: 'green' });
-      router.push('/dashboard');
+      if (response.status == 200) {
+        $q.notify({ message: 'Login Success!', color: 'green' });
+        router.push('/dashboard');
+      }
     })
     .catch(function (e) {
       $q.notify({ message: 'Login Failed!', color: 'red' });
@@ -85,7 +95,7 @@ async function login() {
         emailInput.value.select();
       }
     })
-    .finally(function() {
+    .finally(function () {
       $q.loading.hide();
     });
 }
